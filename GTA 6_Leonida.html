@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leonida Wire — Release-Begleiter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0416;
+    --bg-panel: #150a2b;
+    --bg-panel-2: #1c0f38;
+    --grid: rgba(255,46,136,0.07);
+    --pink: #ff2e88;
+    --cyan: #00e5ff;
+    --gold: #ffb627;
+    --green: #05ffa1;
+    --text: #f2ecff;
+    --text-dim: #a898c9;
+    --border: rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Rajdhani',sans-serif;
+    font-weight:500;
+    min-height:100vh;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Bebas Neue',cursive;
+    letter-spacing:0.03em;
+    font-weight:400;
+    margin:0;
+  }
+  .mono{font-family:'Space Mono',monospace;}
+  a{color:var(--cyan);}
+
+  /* ---- NAV ---- */
+  header.topnav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,4,22,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.7rem 1.2rem;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:0.5rem;
+    white-space:nowrap;
+  }
+  .brand .wordmark{
+    font-size:1.6rem;
+    background:linear-gradient(90deg,var(--pink),var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 24px rgba(255,46,136,0.35);
+  }
+  .brand .sub{
+    font-size:0.68rem; color:var(--text-dim); letter-spacing:0.12em;
+    font-family:'Space Mono',monospace;
+  }
+  nav.tabs{display:flex; gap:0.3rem; flex-wrap:wrap;}
+  nav.tabs button{
+    background:transparent; border:1px solid transparent;
+    color:var(--text-dim); font-family:'Rajdhani',sans-serif;
+    font-weight:700; font-size:0.92rem; letter-spacing:0.04em;
+    padding:0.45rem 0.9rem; border-radius:3px; cursor:pointer;
+    transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  nav.tabs button:hover{ color:var(--text); border-color:var(--border); }
+  nav.tabs button.active{
+    color:var(--bg); background:var(--cyan);
+    box-shadow:0 0 16px rgba(0,229,255,0.5);
+  }
+  .countdown-mini{
+    font-family:'Space Mono',monospace; font-size:0.78rem;
+    color:var(--gold); border:1px solid rgba(255,182,39,0.35);
+    padding:0.35rem 0.6rem; border-radius:3px; white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:1.6rem 1.2rem 4rem;}
+  .tabpanel{display:none; animation:fade .25s ease;}
+  .tabpanel.active{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  /* ---- HERO ---- */
+  .hero{
+    position:relative; overflow:hidden;
+    border:1px solid var(--border); border-radius:6px;
+    padding:2.4rem 1.6rem; margin-bottom:1.6rem;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(255,46,136,0.28), transparent 55%),
+      radial-gradient(ellipse at 90% 10%, rgba(0,229,255,0.22), transparent 55%),
+      var(--bg-panel);
+    text-align:center;
+  }
+  .hero .eyebrow{
+    font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--text-dim);
+    letter-spacing:0.15em; margin-bottom:0.6rem;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 8vw, 5rem); line-height:0.95;
+    color:var(--text);
+    text-shadow:0 0 30px rgba(255,46,136,0.4), 0 0 60px rgba(0,229,255,0.15);
+  }
+  .hero h1 span{color:var(--pink);}
+  .hero p.tag{color:var(--text-dim); font-size:1.05rem; max-width:44ch; margin:0.7rem auto 0;}
+  .clock{
+    display:flex; justify-content:center; gap:0.8rem; margin-top:1.8rem; flex-wrap:wrap;
+  }
+  .clock .unit{
+    background:rgba(0,0,0,0.35); border:1px solid var(--border); border-radius:5px;
+    padding:0.7rem 1.1rem; min-width:78px;
+  }
+  .clock .unit .num{
+    font-family:'Space Mono',monospace; font-size:1.9rem; color:var(--cyan);
+    text-shadow:0 0 12px rgba(0,229,255,0.6);
+    animation:flicker 4s infinite;
+  }
+  .clock .unit .lbl{font-size:0.65rem; color:var(--text-dim); letter-spacing:0.1em; margin-top:0.2rem;}
+  @keyframes flicker{
+    0%,92%,100%{opacity:1;} 93%{opacity:0.55;} 94%{opacity:1;} 96%{opacity:0.7;} 97%{opacity:1;}
+  }
+
+  /* ---- section headers ---- */
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; margin:0 0 1rem;}
+  .section-head h2{font-size:1.9rem; color:var(--text);}
+  .section-head .count{color:var(--text-dim); font-family:'Space Mono',monospace; font-size:0.8rem;}
+
+  /* ---- filter chips ---- */
+  .chips{display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.2rem;}
+  .chip{
+    font-family:'Space Mono',monospace; font-size:0.72rem;
+    border:1px solid var(--border); color:var(--text-dim);
+    padding:0.35rem 0.7rem; border-radius:20px; cursor:pointer;
+    background:transparent; letter-spacing:0.03em;
+  }
+  .chip.active{ color:var(--bg); background:var(--text); border-color:var(--text); }
+
+  /* ---- news timeline ---- */
+  .timeline{position:relative; padding-left:1.4rem; border-left:2px solid var(--border);}
+  .news-card{position:relative; margin-bottom:1.3rem; padding:1rem 1.1rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:5px;}
+  .news-card::before{
+    content:''; position:absolute; left:-1.85rem; top:1.3rem; width:10px; height:10px;
+    border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan);
+  }
+  .news-card[data-status="ruecken"]::before,
+  .news-card[data-status="geruecht"]::before{background:var(--gold); box-shadow:0 0 8px var(--gold);}
+  .news-card .meta{display:flex; gap:0.6rem; align-items:center; margin-bottom:0.4rem; flex-wrap:wrap;}
+  .news-card .date{font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--text-dim);}
+  .tag{
+    font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:0.06em;
+    padding:0.15rem 0.5rem; border-radius:3px; text-transform:uppercase;
+  }
+  .tag.bestaetigt{background:rgba(5,255,161,0.14); color:var(--green); border:1px solid rgba(5,255,161,0.35);}
+  .tag.geruecht{background:rgba(255,182,39,0.14); color:var(--gold); border:1px solid rgba(255,182,39,0.35);}
+  .news-card h3{font-size:1.25rem; color:var(--text); margin-bottom:0.3rem; font-family:'Rajdhani',sans-serif; font-weight:700;}
+  .news-card p{margin:0; color:var(--text-dim); font-size:0.95rem; line-height:1.45;}
+  .news-card .src{display:block; margin-top:0.5rem; font-size:0.72rem; color:var(--text-dim); font-style:italic;}
+
+  /* ---- map ---- */
+  .map-wrap{display:flex; gap:1.4rem; flex-wrap:wrap;}
+  .map-svg-box{flex:1 1 380px; background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:0.8rem;}
+  .map-info{flex:1 1 280px; background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:1.2rem; min-height:220px;}
+  .map-info h3{font-size:1.5rem; color:var(--pink); margin-bottom:0.5rem;}
+  .map-info .status{font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--text-dim); margin-bottom:0.7rem; display:block;}
+  .map-info p{color:var(--text-dim); line-height:1.5; font-size:0.95rem;}
+  .pin{cursor:pointer;}
+  .pin circle.dot{fill:var(--pink); stroke:#fff2; stroke-width:1; transition:r .15s ease;}
+  .pin:hover circle.dot, .pin.selected circle.dot{fill:var(--cyan); r:9;}
+  .pin text{font-family:'Space Mono',monospace; font-size:9px; fill:var(--text); pointer-events:none;}
+  .map-disclaimer{font-size:0.75rem; color:var(--text-dim); margin-top:0.8rem; font-style:italic;}
+
+  /* ---- cheats ---- */
+  .banner{
+    background:linear-gradient(90deg, rgba(255,46,136,0.14), rgba(0,229,255,0.1));
+    border:1px solid var(--border); border-radius:6px; padding:1rem 1.2rem; margin-bottom:1.3rem;
+  }
+  .banner strong{color:var(--gold);}
+  .subtabs{display:flex; gap:0.5rem; margin-bottom:1.2rem;}
+  .subtabs button{
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.9rem;
+    background:var(--bg-panel); border:1px solid var(--border); color:var(--text-dim);
+    padding:0.45rem 1rem; border-radius:4px; cursor:pointer;
+  }
+  .subtabs button.active{color:var(--bg); background:var(--gold); border-color:var(--gold);}
+  .cheat-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:0.8rem;}
+  .cheat-card{background:var(--bg-panel); border:1px solid var(--border); border-radius:5px; padding:0.85rem 1rem;}
+  .cheat-card .cat{font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--text-dim); letter-spacing:0.08em; text-transform:uppercase;}
+  .cheat-card .code{font-family:'Space Mono',monospace; font-size:1.1rem; color:var(--green); margin:0.25rem 0;}
+  .cheat-card .effect{font-size:0.88rem; color:var(--text); margin-bottom:0.6rem;}
+  .cheat-card .input-row{
+    display:flex; gap:0.5rem; align-items:baseline; padding-top:0.45rem;
+    border-top:1px dashed var(--border); margin-top:0.45rem;
+  }
+  .cheat-card .input-lbl{font-size:0.62rem; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase; flex:0 0 auto;}
+  .cheat-card .input-val{font-size:0.72rem; color:var(--cyan); line-height:1.4; word-break:break-word;}
+
+  /* ---- tips ---- */
+  .tip-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1rem;}
+  .tip-card{background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:1.1rem 1.2rem;}
+  .tip-card h3{font-size:1.3rem; color:var(--cyan); margin-bottom:0.5rem;}
+  .tip-card p{color:var(--text-dim); font-size:0.92rem; line-height:1.5; margin:0;}
+  .tip-card .price{font-family:'Space Mono',monospace; color:var(--gold); font-size:0.85rem; display:block; margin-top:0.5rem;}
+  .placeholder-card{border-style:dashed; opacity:0.7;}
+
+  /* ---- notes ---- */
+  .notes-box{background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:1.2rem;}
+  textarea#notesArea{
+    width:100%; min-height:280px; resize:vertical;
+    background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:5px;
+    font-family:'Space Mono',monospace; font-size:0.9rem; padding:0.9rem; line-height:1.5;
+  }
+  textarea#notesArea:focus{outline:none; border-color:var(--cyan);}
+  .save-state{font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--text-dim); margin-top:0.5rem; display:block;}
+
+  footer{
+    text-align:center; padding:2rem 1rem; color:var(--text-dim); font-size:0.75rem;
+    border-top:1px solid var(--border); margin-top:2rem;
+  }
+
+  @media (max-width:640px){
+    .brand .sub{display:none;}
+    .hero{padding:1.8rem 1rem;}
+    .clock .unit{min-width:64px; padding:0.55rem 0.7rem;}
+    .clock .unit .num{font-size:1.4rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="brand">
+    <span class="wordmark display">LEONIDA WIRE</span>
+    <span class="sub mono">INOFFIZIELLER RELEASE-BEGLEITER</span>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-tab="news" class="active">News</button>
+    <button data-tab="map">Karte</button>
+    <button data-tab="cheats">Cheats</button>
+    <button data-tab="tips">Tipps</button>
+    <button data-tab="notes">Notizen</button>
+  </nav>
+  <div class="countdown-mini mono" id="miniCountdown">lädt …</div>
+</header>
+
+<main>
+
+  <!-- NEWS -->
+  <section class="tabpanel active" id="tab-news">
+    <div class="hero">
+      <div class="eyebrow mono">RELEASE-COUNTDOWN</div>
+      <h1>VICE CITY<br>RUFT<span>.</span></h1>
+      <p class="tag">Das Spiel erscheint am 19. November 2026 für PS5 &amp; Xbox Series X|S.</p>
+      <div class="clock" id="clock">
+        <div class="unit"><div class="num" id="cd-days">--</div><div class="lbl">TAGE</div></div>
+        <div class="unit"><div class="num" id="cd-hours">--</div><div class="lbl">STD</div></div>
+        <div class="unit"><div class="num" id="cd-min">--</div><div class="lbl">MIN</div></div>
+        <div class="unit"><div class="num" id="cd-sec">--</div><div class="lbl">SEK</div></div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>Neuigkeiten</h2>
+      <span class="count mono" id="newsCount"></span>
+    </div>
+    <div class="chips" id="newsFilters">
+      <button class="chip active" data-filter="alle">Alle</button>
+      <button class="chip" data-filter="bestaetigt">Bestätigt</button>
+      <button class="chip" data-filter="geruecht">Gerücht</button>
+    </div>
+    <div class="timeline" id="newsList"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="tabpanel" id="tab-map">
+    <div class="section-head"><h2>Leonida &amp; Vice City</h2></div>
+    <p style="color:var(--text-dim); max-width:70ch; margin-bottom:1.2rem;">
+      Übersicht der bislang aus Trailern, Screenshots und offiziellem Bildmaterial bekannten Regionen.
+      Klicke auf einen Pin für Details.
+    </p>
+    <div class="map-wrap">
+      <div class="map-svg-box">
+        <svg id="mapSvg" viewBox="0 0 480 620" style="width:100%; height:auto; display:block;">
+          <!-- stylized landmass -->
+          <path d="M120,20 C220,10 300,60 290,140 C282,205 330,240 320,300
+                   C310,365 350,400 335,460 C322,510 260,530 250,560
+                   C244,580 235,595 225,595 C212,595 210,570 200,545
+                   C185,505 150,470 140,420 C128,360 90,330 80,270
+                   C68,205 95,150 90,100 C87,60 90,30 120,20 Z"
+                fill="#1c0f38" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+          <!-- keys chain -->
+          <circle cx="210" cy="575" r="5" fill="#1c0f38" stroke="rgba(255,255,255,0.12)"/>
+          <circle cx="195" cy="590" r="4" fill="#1c0f38" stroke="rgba(255,255,255,0.12)"/>
+          <circle cx="180" cy="602" r="3.5" fill="#1c0f38" stroke="rgba(255,255,255,0.12)"/>
+
+          <g id="pins"></g>
+        </svg>
+      </div>
+      <div class="map-info" id="mapInfo">
+        <span class="status mono">WÄHLE EINEN ORT</span>
+        <h3>Leonida</h3>
+        <p>Der fiktive, an Florida angelehnte Bundesstaat, in dem die Handlung spielt. Klicke links auf einen der markierten Punkte, um mehr über die jeweilige Region zu erfahren.</p>
+      </div>
+    </div>
+    <p class="map-disclaimer">Stilisierte, nicht-offizielle Darstellung zur groben Orientierung — keine echte offizielle Karte. Lagebeziehungen sind angenähert.</p>
+  </section>
+
+  <!-- CHEATS -->
+  <section class="tabpanel" id="tab-cheats">
+    <div class="section-head"><h2>Cheats</h2></div>
+    <div class="banner">
+      <strong>Für den neuen Teil sind aktuell keine Cheats bestätigt.</strong>
+      Es wurde bis zum Release am 19.11.2026 keine offizielle Cheat-Liste veröffentlicht.
+      Sobald sich das ändert, wandern die echten Codes an die Spitze dieser Seite.
+      Bis dahin: eine Auffrischung der bekanntesten Codes aus früheren Teilen.
+    </div>
+    <div class="subtabs" id="cheatSubtabs">
+      <button data-game="v" class="active">Teil V</button>
+      <button data-game="sanandreas">San Andreas</button>
+    </div>
+    <p style="color:var(--text-dim); font-size:0.85rem; max-width:70ch; margin:-0.4rem 0 1.1rem;">
+      Eingabe auf PS5: Tastenfolge zügig und ohne Pause im laufenden Spiel drücken (nicht im Fahrzeug).
+      Teil V nimmt zusätzlich Codes per Handy entgegen — beides deaktiviert Trophäen für den aktuellen Spielstand.
+    </p>
+    <div class="cheat-grid" id="cheatGrid"></div>
+  </section>
+
+  <!-- TIPS -->
+  <section class="tabpanel" id="tab-tips">
+    <div class="section-head"><h2>Tipps</h2></div>
+    <div class="tip-grid" id="tipGrid"></div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="tabpanel" id="tab-notes">
+    <div class="section-head"><h2>Meine Notizen</h2></div>
+    <p style="color:var(--text-dim); max-width:70ch; margin-bottom:1rem;">
+      Platz für eigene Notizen während des Spielens — Missions-Tipps, Fundorte, Erinnerungen. Wird automatisch
+      auf diesem Gerät gespeichert.
+    </p>
+    <div class="notes-box">
+      <textarea id="notesArea" placeholder="z. B. Kollektiblen-Standorte, Build-Ideen, offene Missionen …"></textarea>
+      <span class="save-state mono" id="saveState">bereit</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Inoffizielles Fanprojekt ohne offizielle Verbindung zum Publisher oder Entwicklerstudio.<br>
+  Alle Angaben nach bestem Wissen recherchiert · Stand: 10.09.2026
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const RELEASE_DATE = new Date('2026-11-19T00:00:00');
+
+const newsItems = [
+  {date:'2026-09-05', status:'bestaetigt', title:'Kein weiterer Aufschub bestätigt', text:'Ein Studioleiter erklärt auf die Frage nach einer möglichen dritten Verschiebung, das Spiel "werde definitiv erscheinen". Der 19. November 2026 bleibt damit offiziell bestätigt.', src:'Insider Gaming'},
+  {date:'2026-09-05', status:'geruecht', title:'Kommt die PC-Version schneller als sonst üblich?', text:'Branchenquellen spekulieren, der Publisher könnte die sonst übliche Wartezeit von rund 19 Monaten für einen PC-Port verkürzen — als Grund werden steigende Konsolenpreise genannt. Offiziell ist zur PC-Version weiterhin nichts angekündigt.', src:'VGC / TweakTown'},
+  {date:'2026-09-04', status:'bestaetigt', title:'Miami-Dade bremst Vice-City-Marketingpläne', text:'Sheriff und weitere Amtsträger in Miami-Dade County stellen sich öffentlich gegen einen Vorschlag, lokale Wahrzeichen für den Launch als "Vice City" zu vermarkten — man wolle kein Verbrechens-Image fördern. Gerichte fordern, von der Kampagne ausgenommen zu werden.', src:'GamesRadar+'},
+  {date:'2026-08-28', status:'bestaetigt', title:'Bestätigt: Keine Mikrotransaktionen, keine generative KI', text:'Der Entwickler bestätigt, dass die Singleplayer-Kampagne ohne Mikrotransaktionen erscheint und keine generative KI in der Entwicklung eingesetzt wurde. Für den erwarteten Online-Modus wird ein eigenes Monetarisierungsmodell erwartet.', src:'Push Square'},
+  {date:'2026-08-27', status:'bestaetigt', title:'"An Extended Look": großer Gameplay-Showcase statt Trailer 3', text:'Statt eines dritten Trailers veröffentlicht der Entwickler ein 26-minütiges Gameplay-Showcase, exklusiv sechs Stunden lang auf Netflix, danach auf YouTube. Gezeigt werden koordiniertes Duo-Gameplay von Jason und Lucia, ein neues Sechs-Sterne-Fahndungssystem, Verkleidungen, ein Kriminalitätsprofil-System sowie eine rund 80-stündige Kampagne. Konsolenfassungen laufen zum Start mit 30fps.', src:'GamesRadar+ Live-Coverage'},
+  {date:'2026-08-17', status:'bestaetigt', title:'Trailer 3 lässt weiter auf sich warten', text:'Bis Mitte August ist kein dritter Trailer erschienen. Community-Live-Ticker vermelden weiterhin Funkstille von offizieller Seite, dafür kleinere Website- und Social-Media-Anpassungen.', src:'Community-Tracker (mein-mmo.de)'},
+  {date:'2026-07-31', status:'geruecht', title:'Trailer 3 im August erwartet', text:'Insider wie NateTheHate und Tom Henderson rechnen mit einem Reveal rund um die Quartalszahlen des Publishers Anfang August — offiziell bestätigt ist das nicht.', src:'Insider Gaming / Business Today'},
+  {date:'2026-06-25', status:'bestaetigt', title:'Preise, Editionen und Vorbestellungen live', text:'Standard Edition 79,99 $, Ultimate Edition 99,99 $. Vorbesteller erhalten das "Vintage Vice City Pack". Bestätigt: Das Spiel startet als reines Singleplayer-Erlebnis, kein Online-Modus am Launch-Tag.', src:'Offizielle Pressemitteilung'},
+  {date:'2026-05-21', status:'bestaetigt', title:'Release-Termin erneut bestätigt', text:'Im Quartalscall des Publishers bestätigt: 19. November 2026, keine weitere Verschiebung. Der CEO kündigt an, dass das volle Marketing "im Sommer" beginnt.', src:'Earnings Call Q4 FY2026'},
+  {date:'2025-11-06', status:'bestaetigt', title:'Zweite Verschiebung auf den 19. November 2026', text:'Der Release wird von Mai 2026 auf den 19. November 2026 verschoben, um dem Spiel den nötigen Feinschliff zu geben.', src:'Offizielle Mitteilung'},
+  {date:'2025-10', status:'geruecht', title:'Online-Modus mit 32 Spielern in internen Playtests', text:'Gerichtsdokumente aus einem Rechtsstreit um entlassene Studio-Mitarbeiter erwähnen interne Playtest-Sessions für einen Online-Modus mit 32 Spielern (aktuelles Online-Pendant: 30). Ein offizieller Name oder Termin existiert nicht.', src:'Gerichtsakten / Fan-Portal'},
+  {date:'2025-05-06', status:'bestaetigt', title:'Trailer 2 veröffentlicht', text:'Zweiter Trailer zeigt mehr von Jason und Lucia, erste Story-Details sowie weitere Gebiete von Leonida und Vice City.', src:'Offizielle Ankündigung'},
+  {date:'2023-12-05', status:'bestaetigt', title:'Trailer 1 veröffentlicht', text:'Erster offizieller Blick auf das Spiel: Vice City, Leonida sowie die Protagonisten Jason und Lucia. Rekordzahlen bei den Aufrufen in den ersten 24 Stunden.', src:'Offizielle Ankündigung'},
+];
+
+const locations = [
+  {id:'vc', name:'Vice City', x:190, y:150, status:'Offiziell bestätigt', text:'Zentraler Schauplatz, inspiriert von Miami. Neon-Downtown, Strände, dichtes Nachtleben — laut offiziellem Material voller als je zuvor.'},
+  {id:'vb', name:'Vice Beach', x:230, y:180, status:'Offiziell bestätigt', text:'Belebter Strandabschnitt direkt an Vice City, in Trailern mehrfach als belebter Treffpunkt gezeigt.'},
+  {id:'pg', name:'Port Gellhorn', x:110, y:230, status:'Offiziell bestätigt', text:'Hafenstädtchen abseits des Glanzes von Vice City — wirkt in den bisherigen Aufnahmen deutlich heruntergekommener und bodenständiger.'},
+  {id:'am', name:'Ambrosia', x:140, y:300, status:'Offiziell bestätigt', text:'Ländliche Region im Landesinneren von Leonida, bislang nur in Kartenausschnitten und Artworks aufgetaucht.'},
+  {id:'gr', name:'Grassrivers', x:230, y:370, status:'Offiziell bestätigt', text:'Sumpf- und Marschgebiet im Everglades-Stil — dichte Vegetation, laut Trailer Schauplatz mehrerer Actionszenen.'},
+  {id:'mk', name:'Mount Kalaga N.P.', x:150, y:420, status:'Offiziell bestätigt', text:'Nationalpark-Gebiet mit Wildnis-Charakter — vermutlich Ausgangspunkt für Outdoor-Aktivitäten wie im Trailer angedeutet (Wandern, Tauchen, Jetski).'},
+  {id:'lk', name:'Leonida Keys', x:210, y:560, status:'Offiziell bestätigt', text:'Inselkette im äußersten Süden. Wird mit der Vorgeschichte von Protagonist Jason Duval in Verbindung gebracht.'},
+];
+
+const cheatsData = {
+  v: [
+    {cat:'Spieler', code:'TURTLE', effect:'Gesundheit & Rüstung auffüllen', ps5:'Kreis, L1, Dreieck, R2, X, Viereck, Kreis, Rechts, Viereck, L1, L1, L1', phone:'1-999-887-853'},
+    {cat:'Spieler', code:'PAINKILLER', effect:'Unverwundbarkeit für 5 Minuten', ps5:'Rechts, X, Rechts, Links, Rechts, R1, Rechts, Links, X, Dreieck', phone:'1-999-7246-545-537'},
+    {cat:'Waffen', code:'TOOLUP', effect:'Alle Waffen & Munition erhalten', ps5:'Dreieck, R2, Links, L1, X, Rechts, Dreieck, Unten, Viereck, L1, L1, L1', phone:'1-999-866-587'},
+    {cat:'Welt', code:'LAWYERUP', effect:'Fahndungslevel sofort senken', ps5:'R1, R1, Kreis, R2, Rechts, Links, Rechts, Links, Rechts, Links', phone:'1-999-5299-3787'},
+    {cat:'Welt', code:'FUGITIVE', effect:'Fahndungslevel erhöhen', ps5:'R1, R1, Kreis, R2, Links, Rechts, Links, Rechts, Links, Rechts', phone:'1-999-3844-8483'},
+    {cat:'Spieler', code:'SKYDIVE', effect:'Fallschirm sofort ausrüsten', ps5:null, phone:'1-999-759-3483'},
+    {cat:'Spieler', code:'HOPTOIT', effect:'Supersprung freischalten', ps5:'Links, Links, Dreieck, Dreieck, Rechts, Rechts, Links, Rechts, Viereck, R1, R2', phone:'1-999-467-8648'},
+    {cat:'Welt', code:'SLOWMO', effect:'Zeitlupe (3 Stufen)', ps5:null, phone:'1-999-756-966'},
+    {cat:'Welt', code:'MAKEITRAIN', effect:'Wetter ändern', ps5:'R2, X, L1, L1, L2, L2, L2, Viereck', phone:'1-999-625-348-7246'},
+    {cat:'Spieler', code:'CATCHME', effect:'Schneller rennen', ps5:'Dreieck, Links, Rechts, Rechts, L2, L1, Viereck', phone:'1-999-228-8463'},
+  ],
+  sanandreas: [
+    {cat:'Spieler', code:'HESOYAM', effect:'Volles Leben, Rüstung, 250.000 $, Fahrzeug repariert', ps5:'R1, R2, L1, X, Links, Unten, Rechts, Oben, Links, Unten, Rechts, Oben', phone:null},
+    {cat:'Spieler', code:'BAGUVIX', effect:'Unbegrenzte Gesundheit', ps5:'Unten, X, Rechts, Links, Rechts, R1, Rechts, Unten, Oben, Dreieck', phone:null},
+    {cat:'Waffen', code:'LXGIWYL', effect:'Waffenpaket 1 (u. a. Schrotflinte, AK-47, Raketenwerfer)', ps5:'R1, R2, L1, R2, Links, Unten, Rechts, Oben, Links, Unten, Rechts, Oben', phone:null},
+    {cat:'Welt', code:'AEZAKMI', effect:'Fahndungslevel dauerhaft deaktivieren', ps5:'R2, Kreis, Oben, L1, Rechts, R1, Rechts, Oben, Viereck, Dreieck', phone:null},
+    {cat:'Fahrzeuge', code:'ROCKETMAN', effect:'Jetpack ausrüsten', ps5:'L1, L2, R1, R2, Oben, Unten, Links, Rechts, L1, L2, R1, R2, Oben, Unten, Links, Rechts', phone:null},
+    {cat:'Spieler', code:'KANGAROO', effect:'Extrem hohe Sprünge', ps5:'Oben, Oben, Dreieck, Dreieck, Oben, Oben, Links, Rechts, Viereck, R2, R2', phone:null},
+  ]
+};
+
+const tips = [
+  {title:'Editionen im Vergleich', price:'79,99 $ / 99,99 $', text:'Standard Edition bringt das komplette Hauptspiel. Ultimate Edition legt Bonus-Fahrzeuge, exklusive Shops (Tattoo, Frisur, Tuning) sowie zwei Sonder-Revolver drauf.'},
+  {title:'Vorbesteller-Bonus', price:'Vintage Vice City Pack', text:'Ein 55er Vapid Stanier, 80er-Jahre-Outfits & Frisuren, tropische Muster für Waffen und eine Garage am Ocean Beach — für alle, die vor Release vorbestellen.'},
+  {title:'Kein Multiplayer am Start', price:null, text:'Das Spiel startet als reines Singleplayer-Erlebnis. Ein Online-Modus wird erwartet, ist aber offiziell nicht bestätigt — Gerüchte sprechen von einem Release rund vier Wochen nach dem 19.11.'},
+  {title:'Zwei Plattformen zum Start', price:'PS5 · Xbox Series X|S', text:'Eine PC-Version wurde bislang nicht angekündigt. Wer auf PC spielen möchte, muss sich voraussichtlich länger gedulden.'},
+  {title:'Vorbereitung bis zum Drop', price:null, text:'Gute Zeit, um den Vorgänger samt DLCs nachzuholen oder aufzufrischen — viele Mechaniken (Deckungssystem, Fahrzeugverhalten) dürften sich weiterentwickelt, aber nicht komplett verändert haben.'},
+  {title:'Day-1-Tipps', price:null, text:'Kommen direkt nach Release hierher, sobald echtes Gameplay vorliegt — inklusive Story-Startguide, Kollektiblen und schnellem Geldverdienen.'},
+];
+
+/* ---------------- TAB SWITCHING ---------------- */
+const tabButtons = document.querySelectorAll('nav.tabs button');
+tabButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    tabButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- COUNTDOWN ---------------- */
+function updateCountdown(){
+  const now = new Date();
+  let diff = RELEASE_DATE - now;
+  if(diff < 0) diff = 0;
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  document.getElementById('cd-days').textContent = d;
+  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-min').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-sec').textContent = String(s).padStart(2,'0');
+  document.getElementById('miniCountdown').textContent = d + ' Tage bis Release';
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* ---------------- NEWS ---------------- */
+let currentFilter = 'alle';
+function renderNews(){
+  const list = document.getElementById('newsList');
+  list.innerHTML = '';
+  const filtered = newsItems.filter(n => currentFilter==='alle' || n.status===currentFilter);
+  document.getElementById('newsCount').textContent = filtered.length + ' Einträge';
+  filtered.forEach(n=>{
+    const card = document.createElement('div');
+    card.className = 'news-card';
+    card.dataset.status = n.status;
+    const dateFmt = new Date(n.date).toLocaleDateString('de-DE', {year:'numeric', month:'short', day:'2-digit'});
+    card.innerHTML = `
+      <div class="meta">
+        <span class="date">${dateFmt}</span>
+        <span class="tag ${n.status}">${n.status === 'bestaetigt' ? 'Bestätigt' : 'Gerücht'}</span>
+      </div>
+      <h3>${n.title}</h3>
+      <p>${n.text}</p>
+      <span class="src">Quelle: ${n.src}</span>
+    `;
+    list.appendChild(card);
+  });
+}
+document.querySelectorAll('#newsFilters .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('#newsFilters .chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    renderNews();
+  });
+});
+renderNews();
+
+/* ---------------- MAP ---------------- */
+const pinsGroup = document.getElementById('pins');
+locations.forEach(loc=>{
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('class','pin');
+  g.dataset.id = loc.id;
+  g.innerHTML = `
+    <circle class="dot" cx="${loc.x}" cy="${loc.y}" r="7"></circle>
+    <text x="${loc.x+11}" y="${loc.y+4}">${loc.name}</text>
+  `;
+  g.addEventListener('click', ()=>selectLocation(loc.id));
+  pinsGroup.appendChild(g);
+});
+function selectLocation(id){
+  const loc = locations.find(l=>l.id===id);
+  document.querySelectorAll('.pin').forEach(p=>p.classList.toggle('selected', p.dataset.id===id));
+  const info = document.getElementById('mapInfo');
+  info.innerHTML = `
+    <span class="status mono">${loc.status.toUpperCase()}</span>
+    <h3>${loc.name}</h3>
+    <p>${loc.text}</p>
+  `;
+}
+
+/* ---------------- CHEATS ---------------- */
+let currentGame = 'v';
+function renderCheats(){
+  const grid = document.getElementById('cheatGrid');
+  grid.innerHTML = '';
+  cheatsData[currentGame].forEach(c=>{
+    const card = document.createElement('div');
+    card.className = 'cheat-card';
+    card.innerHTML = `
+      <div class="cat mono">${c.cat}</div>
+      <div class="code">${c.code}</div>
+      <div class="effect">${c.effect}</div>
+      ${c.ps5 ? `<div class="input-row"><span class="input-lbl mono">PS5</span><span class="input-val mono">${c.ps5}</span></div>` : ''}
+      ${c.phone ? `<div class="input-row"><span class="input-lbl mono">Handy</span><span class="input-val mono">${c.phone}</span></div>` : ''}
+      ${(!c.ps5 && currentGame==='v') ? `<div class="input-row"><span class="input-lbl mono">PS5</span><span class="input-val mono">nur per Handy</span></div>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+}
+document.querySelectorAll('#cheatSubtabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#cheatSubtabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentGame = btn.dataset.game;
+    renderCheats();
+  });
+});
+renderCheats();
+
+/* ---------------- TIPS ---------------- */
+const tipGrid = document.getElementById('tipGrid');
+tips.forEach(t=>{
+  const card = document.createElement('div');
+  card.className = 'tip-card' + (t.title === 'Day-1-Tipps' ? ' placeholder-card' : '');
+  card.innerHTML = `
+    <h3>${t.title}</h3>
+    <p>${t.text}</p>
+    ${t.price ? `<span class="price mono">${t.price}</span>` : ''}
+  `;
+  tipGrid.appendChild(card);
+});
+
+/* ---------------- NOTES (persistent storage) ---------------- */
+const notesArea = document.getElementById('notesArea');
+const saveState = document.getElementById('saveState');
+let saveTimer = null;
+
+function loadNotes(){
+  try{
+    const value = localStorage.getItem('leonida-wire-notes');
+    if(value){ notesArea.value = value; }
+    saveState.textContent = 'geladen';
+  }catch(e){
+    saveState.textContent = 'noch keine Notizen gespeichert';
+  }
+}
+function saveNotes(){
+  try{
+    saveState.textContent = 'speichere …';
+    localStorage.setItem('leonida-wire-notes', notesArea.value);
+    saveState.textContent = 'gespeichert · ' + new Date().toLocaleTimeString('de-DE');
+  }catch(e){
+    saveState.textContent = 'Speichern fehlgeschlagen';
+  }
+}
+notesArea.addEventListener('input', ()=>{
+  saveState.textContent = 'ungespeicherte Änderungen …';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNotes, 800);
+});
+loadNotes();
+</script>
+</body>
+</html>
