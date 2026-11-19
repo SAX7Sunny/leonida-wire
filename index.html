@@ -244,49 +244,26 @@
     <span class="sub mono">INOFFIZIELLER RELEASE-BEGLEITER</span>
   </div>
   <nav class="tabs" id="tabNav">
-    <button data-tab="news" class="active">News</button>
-    <button data-tab="map">Karte</button>
+    <button data-tab="map" class="active">Karte</button>
+    <button data-tab="news">News</button>
     <button data-tab="cheats">Cheats</button>
     <button data-tab="tips">Tipps</button>
     <button data-tab="notes">Notizen</button>
   </nav>
-  <div class="countdown-mini mono" id="miniCountdown">lädt …</div>
 </header>
 
 <main>
 
-  <!-- NEWS -->
-  <section class="tabpanel active" id="tab-news">
-    <div class="hero">
-      <div class="eyebrow mono">RELEASE-COUNTDOWN</div>
-      <h1>VICE CITY<br>RUFT<span>.</span></h1>
-      <p class="tag">Das Spiel erscheint am 19. November 2026 für PS5 &amp; Xbox Series X|S.</p>
-      <div class="clock" id="clock">
-        <div class="unit"><div class="num" id="cd-days">--</div><div class="lbl">TAGE</div></div>
-        <div class="unit"><div class="num" id="cd-hours">--</div><div class="lbl">STD</div></div>
-        <div class="unit"><div class="num" id="cd-min">--</div><div class="lbl">MIN</div></div>
-        <div class="unit"><div class="num" id="cd-sec">--</div><div class="lbl">SEK</div></div>
-      </div>
-    </div>
-
-    <div class="section-head">
-      <h2>Neuigkeiten</h2>
-      <span class="count mono" id="newsCount"></span>
-    </div>
-    <div class="chips" id="newsFilters">
-      <button class="chip active" data-filter="alle">Alle</button>
-      <button class="chip" data-filter="bestaetigt">Bestätigt</button>
-      <button class="chip" data-filter="geruecht">Gerücht</button>
-    </div>
-    <div class="timeline" id="newsList"></div>
-  </section>
-
   <!-- MAP -->
-  <section class="tabpanel" id="tab-map">
+  <section class="tabpanel active" id="tab-map">
     <div class="section-head"><h2>Leonida &amp; Vice City</h2></div>
     <p style="color:var(--text-dim); max-width:70ch; margin-bottom:1.2rem;">
-      Übersicht der bislang aus Trailern, Screenshots und offiziellem Bildmaterial bekannten Regionen.
-      Klicke auf einen Pin für Details.
+      Übersicht der Regionen inkl. Hinweisen zu Geld-, Fahrzeug- und Beute-Spots, die seit dem Release
+      aus Spieleguides und eigenen Erkundungen bekannt sind. Klicke auf einen Pin für Details.
+      Zusätzlicher Tipp: Auf Leonidas Straßen tauchen gelegentlich liegengebliebene Fahrzeuge mit
+      Drogenverstecken auf — die genaue Position ist zufällig. Seltene Supersportwagen (u. a. Bravado
+      Banshee 900R, Truffade Nero Custom, Pegassi Zentorno, Grotti Turismo R, Ocelot Virtue) kursieren
+      laut Community-Berichten, allerdings ohne einen bislang verifizierten festen Spawn-Ort.
     </p>
     <div class="map-wrap">
       <div class="map-svg-box">
@@ -313,6 +290,20 @@
       </div>
     </div>
     <p class="map-disclaimer">Stilisierte, nicht-offizielle Darstellung zur groben Orientierung — keine echte offizielle Karte. Lagebeziehungen sind angenähert.</p>
+  </section>
+
+  <!-- NEWS -->
+  <section class="tabpanel" id="tab-news">
+    <div class="section-head">
+      <h2>Neuigkeiten</h2>
+      <span class="count mono" id="newsCount"></span>
+    </div>
+    <div class="chips" id="newsFilters">
+      <button class="chip active" data-filter="alle">Alle</button>
+      <button class="chip" data-filter="bestaetigt">Bestätigt</button>
+      <button class="chip" data-filter="geruecht">Gerücht</button>
+    </div>
+    <div class="timeline" id="newsList"></div>
   </section>
 
   <!-- CHEATS -->
@@ -363,7 +354,6 @@
 
 <script>
 /* ---------------- DATA ---------------- */
-const RELEASE_DATE = new Date('2026-11-19T00:00:00');
 
 const newsItems = [
   {date:'2026-11-09', status:'geruecht', title:'Datamine deutet auf Multiplayer-Zugriff im Konsolenmenü hin', text:'Dataminer entdecken Hinweise in den Systemmenüs einer Konsolenplattform, die auf einen möglichen direkten Online-Zugriff hindeuten könnten. Offiziell bestätigt ist dazu nichts.', src:'Community-Tracker / VGTimes'},
@@ -405,13 +395,13 @@ const newsItems = [
 ];
 
 const locations = [
-  {id:'vc', name:'Vice City', x:190, y:150, status:'Offiziell bestätigt', text:'Zentraler Schauplatz, inspiriert von Miami. Neon-Downtown, Strände, dichtes Nachtleben — laut offiziellem Material voller als je zuvor.'},
+  {id:'vc', name:'Vice City', x:190, y:150, status:'Geld- & Loot-Tipp', text:'Zentraler Schauplatz, inspiriert von Miami. Neon-Downtown, Strände, dichtes Nachtleben. Spieleguides nennen das südlich angrenzende Vice-Dale County als gutes frühes Loot-Ziel: ca. 5 km von Jasons Haus entfernt soll ein Lagerhaus besonders ergiebige Beute für den Spielstart bieten.'},
   {id:'vb', name:'Vice Beach', x:230, y:180, status:'Offiziell bestätigt', text:'Belebter Strandabschnitt direkt an Vice City, in Trailern mehrfach als belebter Treffpunkt gezeigt.'},
-  {id:'pg', name:'Port Gellhorn', x:110, y:230, status:'Offiziell bestätigt', text:'Hafenstädtchen abseits des Glanzes von Vice City — wirkt in den bisherigen Aufnahmen deutlich heruntergekommener und bodenständiger.'},
-  {id:'am', name:'Ambrosia', x:140, y:300, status:'Offiziell bestätigt', text:'Ländliche Region im Landesinneren von Leonida, bislang nur in Kartenausschnitten und Artworks aufgetaucht.'},
-  {id:'gr', name:'Grassrivers', x:230, y:370, status:'Offiziell bestätigt', text:'Sumpf- und Marschgebiet im Everglades-Stil — dichte Vegetation, laut Trailer Schauplatz mehrerer Actionszenen.'},
+  {id:'pg', name:'Port Gellhorn', x:110, y:230, status:'Fahrzeug-Tipp', text:'Hafenstädtchen abseits des Glanzes von Vice City — heruntergekommener und bodenständiger. Laut Guides kauft der Hehler Moses hier unregistrierte bzw. „heiße" Fahrzeuge an; Pfandhäuser in der Gegend sollen bei verkaufter Beute außerdem bessere Preise zahlen als anderswo.'},
+  {id:'am', name:'Ambrosia', x:140, y:300, status:'Geld- & Loot-Tipp', text:'Ländliche Region im Landesinneren von Leonida. Guides verorten südlich von Hamlet ein Industrie-Lagergebiet sowie ein heruntergekommenes Motel, in dem ein Safe mit Kokain und einem Scharfschützengewehr zu finden sein soll.'},
+  {id:'gr', name:'Grassrivers', x:230, y:370, status:'Geld- & Loot-Tipp', text:'Sumpf- und Marschgebiet im Everglades-Stil. Guides berichten von abgestürzten Kleinflugzeugen mit Drogenladungen sowie einem „Kingfisher Compound", das sich mit einer dort gelagerten Waffenkiste ausrauben lässt.'},
   {id:'mk', name:'Mount Kalaga N.P.', x:150, y:420, status:'Offiziell bestätigt', text:'Nationalpark-Gebiet mit Wildnis-Charakter — vermutlich Ausgangspunkt für Outdoor-Aktivitäten wie im Trailer angedeutet (Wandern, Tauchen, Jetski).'},
-  {id:'lk', name:'Leonida Keys', x:210, y:560, status:'Offiziell bestätigt', text:'Inselkette im äußersten Süden. Wird mit der Vorgeschichte von Protagonist Jason Duval in Verbindung gebracht.'},
+  {id:'lk', name:'Leonida Keys', x:210, y:560, status:'Geld- & Loot-Tipp', text:'Inselkette im äußersten Süden, u. a. mit „Key Lento" verbunden — wird mit der Vorgeschichte von Protagonist Jason Duval in Verbindung gebracht. Laut Guides lassen sich hier nach der Mission „Island Dreams" (Tauchausrüstung von Kenton) Schiffswracks unter Wasser erkunden, markiert durch violette Symbole — Beute im Wert von teils über 1.400 $ pro Wrack.'},
 ];
 
 const cheatsData = {
@@ -456,24 +446,6 @@ tabButtons.forEach(btn=>{
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
   });
 });
-
-/* ---------------- COUNTDOWN ---------------- */
-function updateCountdown(){
-  const now = new Date();
-  let diff = RELEASE_DATE - now;
-  if(diff < 0) diff = 0;
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor((diff%86400000)/3600000);
-  const m = Math.floor((diff%3600000)/60000);
-  const s = Math.floor((diff%60000)/1000);
-  document.getElementById('cd-days').textContent = d;
-  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-  document.getElementById('cd-min').textContent = String(m).padStart(2,'0');
-  document.getElementById('cd-sec').textContent = String(s).padStart(2,'0');
-  document.getElementById('miniCountdown').textContent = d + ' Tage bis Release';
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
 
 /* ---------------- NEWS ---------------- */
 let currentFilter = 'alle';
