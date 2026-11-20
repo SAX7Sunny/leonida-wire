@@ -178,7 +178,30 @@
   .pin circle.dot{fill:var(--pink); stroke:#fff2; stroke-width:1; transition:r .15s ease;}
   .pin:hover circle.dot, .pin.selected circle.dot{fill:var(--cyan); r:9;}
   .pin text{font-family:'Space Mono',monospace; font-size:9px; fill:var(--text); pointer-events:none;}
+  .subpin{cursor:pointer;}
+  .subpin rect{stroke:#fff3; stroke-width:1; transition:filter .15s ease;}
+  .subpin-loot rect{fill:var(--gold);}
+  .subpin-vehicle rect{fill:var(--cyan);}
+  .subpin:hover rect{filter:brightness(1.35);}
+  .map-legend{display:flex; gap:1rem; flex-wrap:wrap; font-size:0.72rem; color:var(--text-dim); margin:0.6rem 0 0; font-family:'Space Mono',monospace;}
+  .map-legend span{display:inline-flex; align-items:center; gap:0.35rem;}
+  .map-legend .sw{width:9px; height:9px; display:inline-block; border-radius:1px;}
+  .map-legend .sw.region{border-radius:50%; background:var(--pink);}
+  .map-legend .sw.loot{transform:rotate(45deg); background:var(--gold);}
+  .map-legend .sw.vehicle{transform:rotate(45deg); background:var(--cyan);}
   .map-disclaimer{font-size:0.75rem; color:var(--text-dim); margin-top:0.8rem; font-style:italic;}
+  .spot-list{list-style:none; margin:0.9rem 0 0; padding:0; display:flex; flex-direction:column; gap:0.55rem;}
+  .spot-item{
+    display:grid; grid-template-columns:1.3rem 1fr; column-gap:0.5rem; row-gap:0.1rem;
+    padding:0.55rem 0.65rem; background:rgba(255,255,255,0.03);
+    border:1px solid var(--border); border-left-width:3px; border-radius:4px;
+  }
+  .spot-item.spot-loot{border-left-color:var(--gold);}
+  .spot-item.spot-vehicle{border-left-color:var(--cyan);}
+  .spot-item.spot-info{border-left-color:var(--green);}
+  .spot-icon{font-size:0.95rem; line-height:1.3;}
+  .spot-label{grid-column:2; font-weight:700; color:var(--text); font-size:0.88rem;}
+  .spot-detail{grid-column:2; color:var(--text-dim); font-size:0.8rem; line-height:1.35;}
 
   /* ---- cheats ---- */
   .banner{
@@ -257,13 +280,17 @@
   <!-- MAP -->
   <section class="tabpanel active" id="tab-map">
     <div class="section-head"><h2>Leonida &amp; Vice City</h2></div>
-    <p style="color:var(--text-dim); max-width:70ch; margin-bottom:1.2rem;">
-      Übersicht der Regionen inkl. Hinweisen zu Geld-, Fahrzeug- und Beute-Spots, die seit dem Release
-      aus Spieleguides und eigenen Erkundungen bekannt sind. Klicke auf einen Pin für Details.
-      Zusätzlicher Tipp: Auf Leonidas Straßen tauchen gelegentlich liegengebliebene Fahrzeuge mit
-      Drogenverstecken auf — die genaue Position ist zufällig. Seltene Supersportwagen (u. a. Bravado
-      Banshee 900R, Truffade Nero Custom, Pegassi Zentorno, Grotti Turismo R, Ocelot Virtue) kursieren
-      laut Community-Berichten, allerdings ohne einen bislang verifizierten festen Spawn-Ort.
+    <p style="color:var(--text-dim); max-width:70ch; margin-bottom:0.4rem;">
+      Klicke auf einen Pin für die Region, auf eine Raute für einen konkreten Loot-/Fahrzeug-Spot.
+    </p>
+    <div class="map-legend">
+      <span><i class="sw region"></i> Region</span>
+      <span><i class="sw loot"></i> Geld / Loot</span>
+      <span><i class="sw vehicle"></i> Fahrzeug</span>
+    </div>
+    <p style="color:var(--text-dim); max-width:70ch; font-size:0.82rem; margin:0.5rem 0 1.1rem;">
+      Zufalls-Spawns ohne festen Ort (liegengebliebene Drogenfahrzeuge, seltene Supersportwagen wie
+      Bravado Banshee 900R oder Pegassi Zentorno) sind hier nicht einzeln markiert.
     </p>
     <div class="map-wrap">
       <div class="map-svg-box">
@@ -395,13 +422,44 @@ const newsItems = [
 ];
 
 const locations = [
-  {id:'vc', name:'Vice City', x:190, y:150, status:'Geld- & Loot-Tipp', text:'Zentraler Schauplatz, inspiriert von Miami. Neon-Downtown, Strände, dichtes Nachtleben. Spieleguides nennen das südlich angrenzende Vice-Dale County als gutes frühes Loot-Ziel: ca. 5 km von Jasons Haus entfernt soll ein Lagerhaus besonders ergiebige Beute für den Spielstart bieten. Fahrzeug-Tipp laut Spieleguides: Am Vice City International Airport, auf der Westseite von Vice-Dale County, sollen auf beiden Runways regelmäßig Verkehrsflugzeuge stehen, die sich unbemerkt entwenden lassen — man muss nur vor den anrückenden Bodenfahrzeugen zurücksetzen.'},
-  {id:'vb', name:'Vice Beach', x:230, y:180, status:'Offiziell bestätigt', text:'Belebter Strandabschnitt direkt an Vice City, in Trailern mehrfach als belebter Treffpunkt gezeigt.'},
-  {id:'pg', name:'Port Gellhorn', x:110, y:230, status:'Fahrzeug-Tipp', text:'Hafenstädtchen abseits des Glanzes von Vice City — heruntergekommener und bodenständiger. Laut Guides kauft der Hehler Moses hier unregistrierte bzw. „heiße" Fahrzeuge an; Pfandhäuser in der Gegend sollen bei verkaufter Beute außerdem bessere Preise zahlen als anderswo.'},
-  {id:'am', name:'Ambrosia', x:140, y:300, status:'Geld- & Loot-Tipp', text:'Ländliche Region im Landesinneren von Leonida. Guides verorten südlich von Hamlet ein Industrie-Lagergebiet sowie ein heruntergekommenes Motel, in dem ein Safe mit Kokain und einem Scharfschützengewehr zu finden sein soll.'},
-  {id:'gr', name:'Grassrivers', x:230, y:370, status:'Geld- & Loot-Tipp', text:'Sumpf- und Marschgebiet im Everglades-Stil. Guides berichten von abgestürzten Kleinflugzeugen mit Drogenladungen sowie einem „Kingfisher Compound", das sich mit einer dort gelagerten Waffenkiste ausrauben lässt.'},
-  {id:'mk', name:'Mount Kalaga N.P.', x:150, y:420, status:'Offiziell bestätigt', text:'Nationalpark-Gebiet mit Wildnis-Charakter — vermutlich Ausgangspunkt für Outdoor-Aktivitäten wie im Trailer angedeutet (Wandern, Tauchen, Jetski).'},
-  {id:'lk', name:'Leonida Keys', x:210, y:560, status:'Geld- & Loot-Tipp', text:'Inselkette im äußersten Süden, u. a. mit „Key Lento" verbunden — wird mit der Vorgeschichte von Protagonist Jason Duval in Verbindung gebracht. Laut Guides lassen sich hier nach der Mission „Island Dreams" (Tauchausrüstung von Kenton) Schiffswracks unter Wasser erkunden, markiert durch violette Symbole — Beute im Wert von teils über 1.400 $ pro Wrack. Fahrzeug-Tipp laut Spieleguides: Rund 4 km südwestlich von Jasons Haus in Key Lento, am Sunbelt Highway (Route 1), liegt der Bezirk Southwind. Am Parkplatz von Sherwin Boatworks und Chickis Tiki Bar soll in einem Hangar südlich davon ein Wasserflugzeug (Mammoth Dodo) stehen, am Dock östlich davon ein Hubschrauber (Buckingham Maverick) — laut Guides einer der frühesten Orte im Spiel, um an beide Fahrzeugtypen zu kommen.'},
+  {id:'vc', name:'Vice City', x:190, y:150, status:'Geld-, Loot- & Fahrzeug-Tipp',
+    intro:'Zentraler Schauplatz, inspiriert von Miami. Neon-Downtown, Strände, dichtes Nachtleben.',
+    spots:[
+      {type:'loot', label:'Lagerhaus, Vice-Dale County', detail:'~5 km südlich von Jasons Haus — ergiebige Beute für den Spielstart.'},
+      {type:'vehicle', label:'Vice City International Airport', detail:'Westseite Vice-Dale County — Flugzeuge auf beiden Runways entwendbar (vor Bodenfahrzeugen zurücksetzen).'},
+    ]},
+  {id:'vb', name:'Vice Beach', x:230, y:180, status:'Offiziell bestätigt',
+    intro:'Belebter Strandabschnitt direkt an Vice City, mehrfach in Trailern als Treffpunkt gezeigt.',
+    spots:[]},
+  {id:'pg', name:'Port Gellhorn', x:110, y:230, status:'Fahrzeug- & Loot-Tipp',
+    intro:'Hafenstädtchen abseits des Glanzes von Vice City — heruntergekommener und bodenständiger.',
+    spots:[
+      {type:'vehicle', label:'Hehler Moses', detail:'Kauft hier unregistrierte/„heiße" Fahrzeuge an.'},
+      {type:'loot', label:'Pfandhäuser vor Ort', detail:'Laut Guides bessere Preise für verkaufte Beute.'},
+    ]},
+  {id:'am', name:'Ambrosia', x:140, y:300, status:'Geld- & Loot-Tipp',
+    intro:'Ländliche Region im Landesinneren von Leonida.',
+    spots:[
+      {type:'loot', label:'Lagergebiet südlich von Hamlet', detail:'Laut Guides ergiebiges Loot-Ziel.'},
+      {type:'loot', label:'Verlassenes Motel (bei Hamlet)', detail:'Safe mit Kokain + Scharfschützengewehr.'},
+    ]},
+  {id:'gr', name:'Grassrivers', x:230, y:370, status:'Geld- & Loot-Tipp',
+    intro:'Sumpf- und Marschgebiet im Everglades-Stil.',
+    spots:[
+      {type:'loot', label:'Abgestürzte Kleinflugzeuge', detail:'Drogenladung an Bord, verstreut im Sumpf.'},
+      {type:'loot', label:'„Kingfisher Compound"', detail:'Ausraubbar — Waffenkiste vor Ort.'},
+    ]},
+  {id:'mk', name:'Mount Kalaga N.P.', x:150, y:420, status:'Offiziell bestätigt',
+    intro:'Nationalpark-Gebiet mit Wildnis-Charakter.',
+    spots:[
+      {type:'info', label:'Outdoor-Aktivitäten', detail:'Vermutlich Wandern, Tauchen, Jetski (laut Trailer).'},
+    ]},
+  {id:'lk', name:'Leonida Keys', x:210, y:560, status:'Geld-, Loot- & Fahrzeug-Tipp',
+    intro:'Inselkette im äußersten Süden, u. a. „Key Lento" — Vorgeschichte von Jason Duval.',
+    spots:[
+      {type:'loot', label:'Schiffswracks („Island Dreams")', detail:'Violett markiert, nach der Mission — teils 1.400 $+ pro Wrack.'},
+      {type:'vehicle', label:'Southwind, Sunbelt Highway (Route 1)', detail:'~4 km SW von Jasons Haus: Wasserflugzeug im Hangar + Hubschrauber am Dock.'},
+    ]},
 ];
 
 const cheatsData = {
@@ -482,9 +540,11 @@ document.querySelectorAll('#newsFilters .chip').forEach(chip=>{
 renderNews();
 
 /* ---------------- MAP ---------------- */
+const svgNS = 'http://www.w3.org/2000/svg';
 const pinsGroup = document.getElementById('pins');
+const subOffsets = [[16,-12],[16,13],[-21,-12],[-21,13]];
 locations.forEach(loc=>{
-  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  const g = document.createElementNS(svgNS,'g');
   g.setAttribute('class','pin');
   g.dataset.id = loc.id;
   g.innerHTML = `
@@ -493,15 +553,36 @@ locations.forEach(loc=>{
   `;
   g.addEventListener('click', ()=>selectLocation(loc.id));
   pinsGroup.appendChild(g);
+
+  let subIdx = 0;
+  loc.spots.forEach(spot=>{
+    if(spot.type !== 'loot' && spot.type !== 'vehicle') return;
+    const off = subOffsets[subIdx % subOffsets.length];
+    subIdx++;
+    const sx = loc.x + off[0], sy = loc.y + off[1];
+    const sg = document.createElementNS(svgNS,'g');
+    sg.setAttribute('class','subpin subpin-'+spot.type);
+    sg.innerHTML = `<title>${loc.name} — ${spot.label}</title><rect x="${sx-3}" y="${sy-3}" width="6" height="6" transform="rotate(45 ${sx} ${sy})"></rect>`;
+    sg.addEventListener('click', (e)=>{ e.stopPropagation(); selectLocation(loc.id); });
+    pinsGroup.appendChild(sg);
+  });
 });
+const spotIcons = {loot:'💰', vehicle:'🚗', info:'ℹ️'};
 function selectLocation(id){
   const loc = locations.find(l=>l.id===id);
   document.querySelectorAll('.pin').forEach(p=>p.classList.toggle('selected', p.dataset.id===id));
   const info = document.getElementById('mapInfo');
+  const spotsHtml = loc.spots.length ? `<ul class="spot-list">${loc.spots.map(s=>`
+    <li class="spot-item spot-${s.type}">
+      <span class="spot-icon">${spotIcons[s.type]||'•'}</span>
+      <span class="spot-label">${s.label}</span>
+      <span class="spot-detail">${s.detail}</span>
+    </li>`).join('')}</ul>` : '';
   info.innerHTML = `
     <span class="status mono">${loc.status.toUpperCase()}</span>
     <h3>${loc.name}</h3>
-    <p>${loc.text}</p>
+    <p>${loc.intro}</p>
+    ${spotsHtml}
   `;
 }
 
